@@ -44,7 +44,7 @@ class CartCRUDModel extends ChangeNotifier {
     return Cart.fromMap(doc.data, doc.documentID);
   }
 
-  Future removeItemFromCart(String id, String userId) async {
+  Future removeItemFromCart(String userId, String id) async {
     await firestoreAPI.removeDocumentCollection(userId, _collectionCarts, id);
     return;
   }

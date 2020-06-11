@@ -37,8 +37,8 @@ class FirestoreAPI {
     return collectionReference.document(id).delete();
   }
 
-  Future<DocumentReference> addDocumentToCollection(String docId, String collectionName, Map data) {
-    return collectionReference.document(docId).collection(collectionName).add(data);
+  Future<DocumentReference> addDocumentToCollection(String id, String collectionName, Map data) {
+    return collectionReference.document(id).collection(collectionName).add(data);
   }
 
   Future<QuerySnapshot> getDocumentsCollection(String id, String collectionName) {

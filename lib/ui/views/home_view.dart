@@ -99,6 +99,7 @@ class _HomeViewState extends State<HomeView> {
                                           top: 24.0,
                                           bottom: 24.0),
                                       child: ProductCard(
+                                          
                                           productDetails: products[index],
                                           cardNum: index)))
                               : Center(

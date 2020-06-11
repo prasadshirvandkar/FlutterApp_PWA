@@ -2,7 +2,7 @@ class Order {
   String orderId;
   String userId;
   String name;
-  List<String> productIds;
+  String productIds;
   bool isEggless;
   String extras;
   String dateTime;
