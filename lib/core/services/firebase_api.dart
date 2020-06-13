@@ -37,27 +37,63 @@ class FirestoreAPI {
     return collectionReference.document(id).delete();
   }
 
-  Future<DocumentReference> addDocumentToCollection(String id, String collectionName, Map data) {
-    return collectionReference.document(id).collection(collectionName).add(data);
+  Future<DocumentReference> addDocumentToCollection(
+      String id, String collectionName, Map data) {
+    return collectionReference
+        .document(id)
+        .collection(collectionName)
+        .add(data);
   }
 
-  Future<QuerySnapshot> getDocumentsCollection(String id, String collectionName) {
-    return collectionReference.document(id).collection(collectionName).getDocuments();
+  Future<QuerySnapshot> getDocumentsCollection(
+      String id, String collectionName) {
+    return collectionReference
+        .document(id)
+        .collection(collectionName)
+        .getDocuments();
   }
 
-  Stream<QuerySnapshot> getStreamDocumentCollection(String id, String collectionName) {
-    return collectionReference.document(id).collection(collectionName).snapshots();
+  Stream<QuerySnapshot> getStreamDocumentCollection(
+      String id, String collectionName) {
+    return collectionReference
+        .document(id)
+        .collection(collectionName)
+        .snapshots();
   }
 
-  Future<DocumentSnapshot> getDocumentCollectionById(String id, String collectionName, String docId) {
-    return collectionReference.document(id).collection(collectionName).document(docId).get();
+  Future<QuerySnapshot> getDocumentCollectionBasedOnCondition(
+      String id, String collectionName, String condition, String conditionId) {
+    return collectionReference
+        .document(id)
+        .collection(collectionName)
+        .where(condition, isEqualTo: conditionId)
+        .getDocuments();
   }
 
-  Future<DocumentReference> updateDocumentToCollection(String collectionName, Map data, String id, String docId) {
-    return collectionReference.document(id).collection(collectionName).document(docId).updateData(data);
+  Future<DocumentSnapshot> getDocumentCollectionById(
+      String id, String collectionName, String docId) {
+    return collectionReference
+        .document(id)
+        .collection(collectionName)
+        .document(docId)
+        .get();
   }
 
-  Future<void> removeDocumentCollection(String id, String collectionName, String docId) {
-    return collectionReference.document(id).collection(collectionName).document(docId).delete();
+  Future<DocumentReference> updateDocumentToCollection(
+      String id, String collectionName, String docId, Map data) {
+    return collectionReference
+        .document(id)
+        .collection(collectionName)
+        .document(docId)
+        .updateData(data);
+  }
+
+  Future<void> removeDocumentCollection(
+      String id, String collectionName, String docId) {
+    return collectionReference
+        .document(id)
+        .collection(collectionName)
+        .document(docId)
+        .delete();
   }
 }

@@ -19,7 +19,8 @@ class CartCRUDModel extends ChangeNotifier {
   List<Cart> carts;
 
   Future<List<Cart>> fetchCartsForUser(String userId) async {
-    var result = await firestoreAPI.getDocumentsCollection(userId, _collectionCarts);
+    var result =
+        await firestoreAPI.getDocumentsCollection(userId, _collectionCarts);
     List<Cart> userCarts = result.documents
         .map((doc) => Cart.fromMap(doc.data, doc.documentID))
         .toList();
@@ -49,9 +50,15 @@ class CartCRUDModel extends ChangeNotifier {
     return;
   }
 
-  Future updateCart(Cart data, String id, String userId) async {
+  Future checkIfProductExistsInCart(String userId, String productId) async {
+    var result = await firestoreAPI.getDocumentCollectionBasedOnCondition(
+        userId, _collectionCarts, 'productId', productId);
+    return result;
+  }
+
+  Future updateCart(String userId, Cart data, String id) async {
     await firestoreAPI.updateDocumentToCollection(
-        _collectionCarts, data.toJson(), userId, id);
+        userId, _collectionCarts, id, data.toJson());
   }
 
   Future addCart(Cart data, String userId) async {

@@ -49,7 +49,7 @@ class OrderCRUDModel extends ChangeNotifier {
   }
 
   Future updateOrder(Order data, String id, String userId) async {
-    await firestoreAPI.updateDocumentToCollection(_collectionOrders, data.toJson(), userId, id);
+    await firestoreAPI.updateDocumentToCollection(userId, _collectionOrders, id, data.toJson());
   }
 
   Future addOrder(Order data, String userId) async {

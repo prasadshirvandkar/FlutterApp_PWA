@@ -9,12 +9,14 @@ class UserInfo extends StatefulWidget {
 
 class _UserInfo extends State<UserInfo> {
   String name, id, imageUrl, email;
-
-  User user = User.fromMap(UserBox.userBoxC.getUserObject(Constants.USER_INFO));
+  Map<String, dynamic> userMap =
+      UserBox.userBoxC.getUserObject(Constants.USER_INFO);
+  User user;
 
   @override
   void initState() {
     super.initState();
+    user = User.fromMap(userMap, userMap['id']);
     id = user.id;
     name = user.name;
     imageUrl = user.imageUrl;
@@ -23,7 +25,22 @@ class _UserInfo extends State<UserInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Your Info'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+      ),
+      body: Container(
+        padding: EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            
+          ],
+        ),
+      ),
+    );
   }
-  
 }

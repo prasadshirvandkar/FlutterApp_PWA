@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/core/models/cart_model.dart';
 import 'package:flutterapp/core/viewmodels/cart_crud_model.dart';
@@ -48,18 +49,17 @@ class _ProductDetails extends State<ProductDetails> {
             ),
             actions: [
               Padding(
-                padding: EdgeInsets.only(
-                  left: 10.0, right: 10.0
-                ),
-              child: IconButton(
-                color: isFavorite ? Colors.red : textColor,
-                icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
-                onPressed: () => {
-                  setState(() {
-                    isFavorite = !isFavorite;
-                  })
-                },
-              )),
+                  padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                  child: IconButton(
+                    color: isFavorite ? Colors.red : textColor,
+                    icon: Icon(
+                        isFavorite ? Icons.favorite : Icons.favorite_border),
+                    onPressed: () => {
+                      setState(() {
+                        isFavorite = !isFavorite;
+                      })
+                    },
+                  )),
             ]),
         body: Stack(children: <Widget>[
           PageView.builder(
@@ -171,7 +171,8 @@ class _ProductDetails extends State<ProductDetails> {
                           alignment: Alignment.bottomRight,
                           child: RaisedButton(
                               onPressed: () async => {
-                                    await CartCRUDModel.cartCRUDModel.addCart(getCartData(), 'sdadasdasd12e123132')
+                                    //await CartCRUDModel.cartCRUDModel.addCart(getCartData(), 'sdadasdasd12e123132')
+                                    _addToCart()
                                   },
                               color: Colors.amber,
                               shape: StadiumBorder(),
@@ -186,6 +187,24 @@ class _ProductDetails extends State<ProductDetails> {
                 ),
               )),
         ]));
+  }
+
+  _addToCart() async {
+    QuerySnapshot result = await CartCRUDModel.cartCRUDModel
+        .checkIfProductExistsInCart('sdadasdasd12e123132', widget.productDetails.productId);
+    if (result.documents.isNotEmpty) {
+      var existingCartData = result.documents[0].data;
+      existingCartData['quantity'] =
+          (int.parse(existingCartData['quantity']) + 1).toString();
+      existingCartData['productPrice'] =
+          (double.parse(existingCartData['productPrice']) +
+                  double.parse(widget.productDetails.price))
+              .toString();
+      Cart cartData = Cart.fromMap(existingCartData, result.documents[0].documentID);
+      await CartCRUDModel.cartCRUDModel.updateCart('sdadasdasd12e123132', cartData, cartData.cartId);
+    } else {
+      await CartCRUDModel.cartCRUDModel.addCart(getCartData(), 'sdadasdasd12e123132');
+    }    
   }
 
   Cart getCartData() {
