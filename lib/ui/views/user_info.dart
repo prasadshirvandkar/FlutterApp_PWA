@@ -25,22 +25,31 @@ class _UserInfo extends State<UserInfo> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Your Info'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
-      body: Container(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            
-          ],
-        ),
-      ),
+    return SafeArea(
+          child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircleAvatar(
+                    backgroundImage: NetworkImage(imageUrl),
+                    radius: 60,
+                    backgroundColor: Colors.transparent,
+                  ),
+                  SizedBox(height: 10.0),
+                  Text(name),
+                  SizedBox(height: 10.0),
+                  Text(email),
+                  SizedBox(height: 10.0),
+                  Text(
+                    'Your Orders',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 26.0),
+                    textAlign: TextAlign.start,
+                  )
+                ],
+              )),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:flutterapp/constants.dart';
 import 'package:flutterapp/core/viewmodels/product_crud_model.dart';
 import 'package:flutterapp/persistance/user_box.dart';
 import 'package:flutterapp/ui/views/cart_view.dart';
+import 'package:flutterapp/ui/views/user_info.dart';
 import 'package:flutterapp/ui/widgets/animated_bottombar.dart';
 import 'package:flutterapp/ui/widgets/category_selector.dart';
 import 'package:flutterapp/ui/widgets/google_signin_button.dart';
@@ -21,6 +22,7 @@ class _HomeView extends State<HomeView> {
   final List<String> categories = new List<String>();
   bool isSignedIn = false;
   var favorites;
+  int home = 1;
 
   @override
   void initState() {
@@ -82,23 +84,32 @@ class _HomeView extends State<HomeView> {
         },
         child: Icon(Icons.add),
       ),
-      body: Container(
-          child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text('Explorasdasde',
-                  style:
-                      TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold)),
-            ),
-            CategorySelector(
-                categories: ['Cakes', 'Chocolates', 'Cookies', 'Biscuits']),
-            ProductCards(productsStream: _productsStream, favorites: favorites)
-          ])),
+      body: (home != 3)
+          ? UserInfo()
+          : Container(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                  Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text('Explorasdasde',
+                        style: TextStyle(
+                            fontSize: 32.0, fontWeight: FontWeight.bold)),
+                  ),
+                  CategorySelector(categories: [
+                    'Cakes',
+                    'Chocolates',
+                    'Cookies',
+                    'Biscuits'
+                  ]),
+                  ProductCards(
+                      productsStream: _productsStream, favorites: favorites)
+                ])),
       bottomNavigationBar: AnimatedBottomBar(onBarTap: (index) {
-        print(index);
+        setState(() {
+          home = index;
+        });
       }),
     );
   }
