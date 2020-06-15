@@ -84,32 +84,37 @@ class _HomeView extends State<HomeView> {
         },
         child: Icon(Icons.add),
       ),
-      body: (home != 3)
-          ? UserInfo()
-          : Container(
+      body: (home != 2)
+          ?UserInfo() : Container(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                  Padding(
+                  SizedBox(
+                    height: 8.0,
+                  ),
+                  /* Padding(
                     padding: EdgeInsets.all(16.0),
-                    child: Text('Explorasdasde',
+                    child: Text('Explore',
                         style: TextStyle(
                             fontSize: 32.0, fontWeight: FontWeight.bold)),
-                  ),
+                  ), */
                   CategorySelector(categories: [
                     'Cakes',
                     'Chocolates',
                     'Cookies',
                     'Biscuits'
                   ]),
+                  SizedBox(height: 8.0,),
                   ProductCards(
                       productsStream: _productsStream, favorites: favorites)
-                ])),
+                ]))
+          ,
       bottomNavigationBar: AnimatedBottomBar(onBarTap: (index) {
         setState(() {
           home = index;
         });
+        print('100101: $home');
       }),
     );
   }

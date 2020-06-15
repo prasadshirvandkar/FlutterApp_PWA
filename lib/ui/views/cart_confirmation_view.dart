@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/core/models/cart_model.dart';
 import 'package:flutterapp/core/models/order_model.dart';
 import 'package:flutterapp/core/viewmodels/admin_order_crud_model.dart';
+import 'package:flutterapp/core/viewmodels/cart_crud_model.dart';
 import 'package:flutterapp/core/viewmodels/order_crud_model.dart';
 import 'package:uuid/uuid.dart';
 
@@ -20,12 +21,15 @@ class CartConfirmation extends StatelessWidget {
                   topLeft: const Radius.circular(20.0),
                   topRight: const Radius.circular(20.0))),
           child: Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: EdgeInsets.all(24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Your Order', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 22.0)),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text('Your Order', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24.0)),
+                ),
                 Padding(
                     padding: EdgeInsets.all(16.0),
                     child: ListView.builder(
@@ -36,7 +40,9 @@ class CartConfirmation extends StatelessWidget {
                           var cartItem = cartItems[index];
                           return 
                           Padding(
-                            padding: EdgeInsets.all(4.0),
+                            padding: EdgeInsets.only(
+                              top: 4.0, bottom: 4.0
+                            ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               crossAxisAlignment: CrossAxisAlignment.center,
@@ -44,7 +50,7 @@ class CartConfirmation extends StatelessWidget {
                                 Text(
                                     '${cartItem.productName} x ${cartItem.quantity}',
                                     style: TextStyle(fontSize: 18.0)),
-                                Text('${cartItem.productPrice}',
+                                Text('\u{20B9} ${cartItem.productPrice}',
                                     style: TextStyle(fontSize: 20.0))
                               ]));
                         })),
@@ -75,27 +81,34 @@ class CartConfirmation extends StatelessWidget {
                   padding: EdgeInsets.only(
                     left: 10.0, right: 10.0
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Delivery Address', style: TextStyle(fontSize: 16.0, color: Colors.blue.shade700)),
-                          InkWell(
-                            onTap: () => {
-
-                            },
-                            child: Text('Edit', style: TextStyle(color: Colors.grey))
-                          )
-                        ],
-                      ),
-                      SizedBox(height: 10.0,),
-                      Text('akjsdbfkjbasdfbakjsbjkfjaskdb dsf bkaf asdff afsdfsd sadf sdf', 
-                      style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
-                    ]
+                  child: Container(
+                    padding: EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12.0)
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('Delivery Address', style: TextStyle(fontSize: 16.0, color: Colors.blue.shade700)),
+                            InkWell(
+                              onTap: () => {
+                                
+                              },
+                              child: Text('Edit', style: TextStyle(color: Colors.grey, fontWeight: FontWeight.bold))
+                            )
+                          ],
+                        ),
+                        SizedBox(height: 16.0),
+                        Text('akjsdbfkjbasdfbakjsbjkfjaskdb dsf bkaf asdff afsdfsd sadf sdf', 
+                        style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold)),
+                      ]
+                    )
                   )
                 ),
                 SizedBox(height: 24.0),
@@ -128,9 +141,16 @@ class CartConfirmation extends StatelessWidget {
   _placeOrder() async {
     if (cartItems.isNotEmpty) {
       Order newOrder = getOrder();
-      await OrderCRUDModel.orderCRUDModel.addOrder(newOrder, 'active');
+      await OrderCRUDModel.orderCRUDModel.addOrder(newOrder, 'sdadasdasd12e123132');
       await AdminOrdersCRUDModel.adminOrdersCRUDModel
           .addOrder(newOrder, 'active');
+      _removeItemsFromCart();
+    }
+  }
+
+  _removeItemsFromCart() async {
+    for(var cartItem in cartItems) {
+      CartCRUDModel.cartCRUDModel.removeItemFromCart('sdadasdasd12e123132', cartItem.cartId);
     }
   }
 
@@ -138,16 +158,58 @@ class CartConfirmation extends StatelessWidget {
     return Order(
         userId: 'sdadasdasd12e123132',
         totalPrice: totalPrice.toString(),
-        name: 'Order-${Uuid().v1().replaceAll('-', '').substring(0, 10)}',
+        name: 'ID${Uuid().v1().replaceAll('-', '').substring(0, 12)}',
         productIds: cartItems
-            .map((cartItem) => cartItem.productId)
-            .reduce((value, element) => '$value,$element'),
+            .map((cartItem) => '${cartItem.productName} x ${cartItem.quantity}')
+            .reduce((value, element) => '$value, $element'),
         isEggless: false,
         extras: '',
         dateTime: new DateTime.now().toString(),
-        paymentStatus: 'Paid',
+        paymentStatus: 'Unpaid',
         location: 'asdasdasdasd',
         quantity: cartItems.length.toString(),
-        orderStatus: 'Placed');
+        orderStatus: 'Order Placed');
+  }
+
+  void _showDialog(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Product Actions"),
+          content: Wrap(children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FlatButton(
+                  child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text("Edit",
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold))),
+                  onPressed: () {
+
+                  },
+                ),
+                SizedBox(height: 8.0),
+                FlatButton(
+                  child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text("Delete",
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold))),
+                  onPressed: () {},
+                )
+              ],
+            )
+          ]),
+        );
+      },
+    );
   }
 }

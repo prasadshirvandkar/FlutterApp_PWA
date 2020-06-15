@@ -49,7 +49,7 @@ class CartCRUDModel extends ChangeNotifier {
     await firestoreAPI.removeDocumentCollection(userId, _collectionCarts, id);
     return;
   }
-
+  
   Future checkIfProductExistsInCart(String userId, String productId) async {
     var result = await firestoreAPI.getDocumentCollectionBasedOnCondition(
         userId, _collectionCarts, 'productId', productId);

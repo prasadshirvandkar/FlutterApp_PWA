@@ -36,6 +36,7 @@ class _ProductCard extends State<ProductCard> {
                       builder: (_) => ProductDetails(
                           productDetails: widget.productDetails)))
             },
+        onLongPress: () => {_showDialog()},
         child: Container(
             child: Stack(
           children: [
@@ -96,11 +97,14 @@ class _ProductCard extends State<ProductCard> {
                                   padding: EdgeInsets.only(bottom: 8.0),
                                   child: InkWell(
                                       onTap: () => {
-                                        setState(() {
-                                          favorite = !favorite;
-                                          addToFavorites(widget.productDetails.productId, favorite);
-                                        })
-                                      },
+                                            setState(() {
+                                              favorite = !favorite;
+                                              addToFavorites(
+                                                  widget
+                                                      .productDetails.productId,
+                                                  favorite);
+                                            })
+                                          },
                                       child: Icon(
                                         favorite
                                             ? Icons.favorite
@@ -124,5 +128,47 @@ class _ProductCard extends State<ProductCard> {
   void addToFavorites(String productId, bool favoriteValue) {
     widget.favorites[productId] = favoriteValue;
     UserBox.userBoxC.addValue(Constants.FAVORITES, widget.favorites);
+  }
+
+  void _showDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Product Actions"),
+          content: Wrap(children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                FlatButton(
+                  child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text("Edit",
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.blue,
+                              fontWeight: FontWeight.bold))),
+                  onPressed: () {
+
+                  },
+                ),
+                SizedBox(height: 8.0),
+                FlatButton(
+                  child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Text("Delete",
+                          style: TextStyle(
+                              fontSize: 18.0,
+                              color: Colors.red,
+                              fontWeight: FontWeight.bold))),
+                  onPressed: () {},
+                )
+              ],
+            )
+          ]),
+        );
+      },
+    );
   }
 }

@@ -27,7 +27,7 @@ class _MyApp extends State<MyApp> {
       title: 'Gaurav Bakes',
       initialRoute: Constants.INITIAL_PAGE,
       theme: ThemeData(
-        fontFamily: 'Montserrat',
+        //fontFamily: 'Montserrat',
         primarySwatch: Colors.yellow,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
