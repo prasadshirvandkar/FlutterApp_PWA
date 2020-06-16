@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/core/models/order_model.dart';
 
 class OrderCard extends StatelessWidget {
+  final Order orderDetails;
+
+  OrderCard({this.orderDetails});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -14,28 +19,28 @@ class OrderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Order ID: 3qr23rnk2b3rbkj2b',
+                  'Order ID: ${orderDetails.orderId}',
                   style: TextStyle(color: Colors.grey),
                 ),
                 SizedBox(
                   height: 16.0,
                 ),
                 Text(
-                  'Cake x 1, Cookies x 2, asdhjva sdjh a x 4, asjdbjkbaks bdkbas d x 6',
+                  orderDetails.productIds,
+                  style: TextStyle(fontSize: 20.0, color: Colors.amber.shade900),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                Text(
+                  'Price: \u{20B9}${orderDetails.totalPrice}',
                   style: TextStyle(fontSize: 20.0),
                 ),
                 SizedBox(
                   height: 16.0,
                 ),
                 Text(
-                  'Price: \$01941',
-                  style: TextStyle(fontSize: 20.0),
-                ),
-                SizedBox(
-                  height: 16.0,
-                ),
-                Text(
-                  'Date: 02 Sun 2020, 19:41:00 PM',
+                  'Date: ${orderDetails.dateTime.toString()}',
                   style: TextStyle(color: Colors.grey),
                 ),
                 SizedBox(
@@ -59,7 +64,7 @@ class OrderCard extends StatelessWidget {
                         child: Padding(
                             padding: EdgeInsets.all(12.0),
                             child: Text(
-                              "ORDER PLACED",
+                              orderDetails.orderStatus,
                               style: TextStyle(color: Colors.green),
                             )),
                         borderSide: BorderSide(

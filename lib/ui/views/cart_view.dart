@@ -41,36 +41,20 @@ class _CartView extends State<CartView> {
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
                     List<DocumentSnapshot> documents = snapshot.data.documents;
-                    cartItems = documents
-                        .map((doc) => Cart.fromMap(doc.data, doc.documentID))
-                        .toList();
-                    return ListView.builder(
-                        itemCount: cartItems.length,
-                        itemBuilder: (buildContext, index) => CartCard(
-                            cartDetails: cartItems[index],
-                            onDelete: () => removeItem(index)));
+                    if (documents.isNotEmpty) {
+                      cartItems = documents
+                          .map((doc) => Cart.fromMap(doc.data, doc.documentID))
+                          .toList();
+                      return ListView.builder(
+                          itemCount: cartItems.length,
+                          itemBuilder: (buildContext, index) => CartCard(
+                              cartDetails: cartItems[index],
+                              onDelete: () => removeItem(index)));
+                    } else {
+                      return noItemsInCart();
+                    }
                   } else {
-                    return Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Center(
-                              child: Text('No Items in Cart',
-                                  style: TextStyle(fontSize: 20.0))),
-                          SizedBox(height: 16.0),
-                          RaisedButton(
-                              color: Colors.blue,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                              ),
-                              onPressed: () {},
-                              child: Padding(
-                                  padding: EdgeInsets.all(16.0),
-                                  child: Text('Continue Shopping',
-                                      style: TextStyle(
-                                          fontSize: 18.0,
-                                          color: Colors.white))))
-                        ]);
+                    return noItemsInCart();
                   }
                 })),
         bottomNavigationBar: Container(
@@ -142,5 +126,27 @@ class _CartView extends State<CartView> {
           .removeItemFromCart('sdadasdasd12e123132', cartItems[index].cartId);
       cartItems.removeAt(index);
     });
+  }
+
+  noItemsInCart() {
+    Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Center(
+              child:
+                  Text('No Items in Cart', style: TextStyle(fontSize: 20.0))),
+          SizedBox(height: 16.0),
+          RaisedButton(
+              color: Colors.blue,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              onPressed: () {},
+              child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('Continue Shopping',
+                      style: TextStyle(fontSize: 18.0, color: Colors.white))))
+        ]);
   }
 }

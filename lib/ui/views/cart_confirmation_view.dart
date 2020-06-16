@@ -28,7 +28,7 @@ class CartConfirmation extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Text('Your Order', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 24.0)),
+                  child: Text('Your Order', style: TextStyle(fontWeight: FontWeight.w700, fontSize: 26.0)),
                 ),
                 Padding(
                     padding: EdgeInsets.all(16.0),
@@ -71,7 +71,7 @@ class CartConfirmation extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text('Total Price: ', style: TextStyle(fontSize: 22.0)),
+                        Text('Total Price: ', style: TextStyle(fontSize: 20.0)),
                         Text('\u{20B9} $totalPrice',
                             style: TextStyle(
                                 fontSize: 28.0, fontWeight: FontWeight.bold))

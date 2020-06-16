@@ -29,9 +29,12 @@ class CartCRUDModel extends ChangeNotifier {
 
   Future<String> fetchTotalPrice(String userId) async {
     var result = await fetchCartsForUser(userId);
-    double totalPrice = result
+    double totalPrice = 0.0;
+    if(result.isNotEmpty) {
+      totalPrice = result
         .map((e) => double.parse(e.productPrice))
         .reduce((value, element) => value + element);
+    }
     return totalPrice.toString();
   }
 
@@ -49,7 +52,7 @@ class CartCRUDModel extends ChangeNotifier {
     await firestoreAPI.removeDocumentCollection(userId, _collectionCarts, id);
     return;
   }
-  
+
   Future checkIfProductExistsInCart(String userId, String productId) async {
     var result = await firestoreAPI.getDocumentCollectionBasedOnCondition(
         userId, _collectionCarts, 'productId', productId);

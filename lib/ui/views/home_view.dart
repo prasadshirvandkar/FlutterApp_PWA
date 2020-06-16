@@ -85,7 +85,7 @@ class _HomeView extends State<HomeView> {
         child: Icon(Icons.add),
       ),
       body: (home != 2)
-          ?UserInfo() : Container(
+          ? Container(
               child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -105,11 +105,13 @@ class _HomeView extends State<HomeView> {
                     'Cookies',
                     'Biscuits'
                   ]),
-                  SizedBox(height: 8.0,),
+                  SizedBox(
+                    height: 8.0,
+                  ),
                   ProductCards(
                       productsStream: _productsStream, favorites: favorites)
                 ]))
-          ,
+          : UserInfo(),
       bottomNavigationBar: AnimatedBottomBar(onBarTap: (index) {
         setState(() {
           home = index;

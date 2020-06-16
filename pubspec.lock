@@ -203,7 +203,7 @@ packages:
       name: file
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "5.1.0"
+    version: "5.2.0"
   firebase:
     dependency: transitive
     description:
@@ -253,13 +253,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.1.1+2"
-  firebase_storage:
-    dependency: "direct main"
-    description:
-      name: firebase_storage
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "3.1.6"
   fixnum:
     dependency: transitive
     description:
@@ -380,13 +373,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "3.1.4"
-  image_picker_web:
-    dependency: "direct main"
-    description:
-      name: image_picker_web
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.9"
   intl:
     dependency: transitive
     description:
@@ -471,6 +457,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.9.3"
+  palette_generator:
+    dependency: "direct main"
+    description:
+      name: palette_generator
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.2.3"
   path:
     dependency: "direct main"
     description:

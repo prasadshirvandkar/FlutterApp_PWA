@@ -3,6 +3,7 @@ import 'package:flutterapp/constants.dart';
 import 'package:flutterapp/core/models/product_model.dart';
 import 'package:flutterapp/persistance/user_box.dart';
 import 'package:flutterapp/ui/views/product_details.dart';
+import 'package:palette_generator/palette_generator.dart';
 
 class ProductCard extends StatefulWidget {
   final Product productDetails;
@@ -16,8 +17,9 @@ class ProductCard extends StatefulWidget {
 }
 
 class _ProductCard extends State<ProductCard> {
-  Color color = Colors.blue;
+  Color color = Colors.red;
   bool favorite;
+  PaletteGenerator paletteGenerator;
 
   @override
   void initState() {
@@ -25,6 +27,13 @@ class _ProductCard extends State<ProductCard> {
     favorite = isFavorite(widget.productDetails.productId);
     //_getImagePalette(AssetImage('assets/images/image8.jpg'));
   }
+
+  /* _getImagePalette(AssetImage assetImage) async {
+    paletteGenerator = await PaletteGenerator.fromImageProvider(assetImage, size: Size(256.0, 170.0), maximumColorCount: 20);
+    setState(() {
+      color = paletteGenerator.darkVibrantColor.color;
+    });
+  } */
 
   @override
   Widget build(BuildContext context) {

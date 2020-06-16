@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/core/models/image_upload_model.dart';
 import 'package:flutterapp/core/models/product_model.dart';
 import 'package:flutterapp/core/viewmodels/product_crud_model.dart';
-import 'package:image_picker_web/image_picker_web.dart';
 
 class AddProduct extends StatefulWidget {
   _AddProduct createState() => _AddProduct();
@@ -151,7 +150,7 @@ class _AddProduct extends State<AddProduct> {
                 })));
   }
 
-  Widget buildGridView() {
+  /* Widget buildGridView() {
     return GridView.count(
       shrinkWrap: true,
       crossAxisCount: 4,
@@ -222,6 +221,6 @@ class _AddProduct extends State<AddProduct> {
 
   _uploadImagesToFirebaseStorage() {
 
-  }
+  } */
   
 }

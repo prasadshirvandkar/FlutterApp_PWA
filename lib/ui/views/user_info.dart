@@ -1,10 +1,18 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterapp/core/models/order_model.dart';
+import 'package:flutterapp/core/viewmodels/order_crud_model.dart';
+import 'package:flutterapp/ui/widgets/order_card.dart';
 
 class UserInfo extends StatefulWidget {
   _UserInfo createState() => _UserInfo();
 }
 
 class _UserInfo extends State<UserInfo> {
+  List<Order> myOrders = new List();
+  final Stream<QuerySnapshot> _cartsStream =
+      OrderCRUDModel.orderCRUDModel.fetchOrdersAsStream('sdadasdasd12e123132');
+
   String name, id, imageUrl, email;
   /* Map<String, dynamic> userMap =
       UserBox.userBoxC.getUserObject(Constants.USER_INFO); */
@@ -102,11 +110,42 @@ class _UserInfo extends State<UserInfo> {
                 textAlign: TextAlign.start,
               ),
               SizedBox(height: 16.0),
-              Center(
-                  child: Text(
-                'No Orders Available',
-                style: TextStyle(color: Colors.grey, fontSize: 24.0),
-              ))
+              Container(
+                  child: StreamBuilder(
+                      stream: _cartsStream,
+                      builder:(context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                        if (snapshot.hasData) {
+                          List<DocumentSnapshot> documents =
+                              snapshot.data.documents;
+                          if (documents.isNotEmpty) {
+                            myOrders = documents
+                                .map((doc) =>
+                                    Order.fromMap(doc.data, doc.documentID))
+                                .toList();
+                            return ListView.builder(
+                                itemCount: myOrders.length,
+                                scrollDirection: Axis.vertical,
+                                shrinkWrap: true,
+                                primary: false, 
+                                itemBuilder: (buildContext, index) =>
+                                    OrderCard(orderDetails: myOrders[index]));
+                          } else {
+                            return Center(
+                                child: Text(
+                              'No Orders Available',
+                              style:
+                                  TextStyle(color: Colors.grey, fontSize: 24.0),
+                            ));
+                          }
+                        } else {
+                          return Center(
+                              child: Text(
+                            'No Orders Available',
+                            style:
+                                TextStyle(color: Colors.grey, fontSize: 24.0),
+                          ));
+                        }
+                      }))
             ],
           )),
     );
