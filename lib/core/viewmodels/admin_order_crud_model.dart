@@ -40,6 +40,12 @@ class AdminOrdersCRUDModel extends ChangeNotifier {
     return;
   }
 
+  Future removeOrderFromActive(String id, Order data) async {
+    await firestoreAPI.removeDocumentCollection('active', _collectionOrders, id);
+    await addOrder(data, 'past');
+    return;
+  }
+
   Future updateOrder(Order data, String id, String userId) async {
     await firestoreAPI.updateDocumentToCollection(userId, _collectionOrders, id, data.toJson());
   }

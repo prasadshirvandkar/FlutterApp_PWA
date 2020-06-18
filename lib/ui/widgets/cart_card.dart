@@ -29,6 +29,12 @@ class _CartCard extends State<CartCard> {
                   width: 110.0,
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.0),
+                      boxShadow: [
+                        BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            offset: Offset(0, 8.0),
+                            blurRadius: 16)
+                      ],
                       image: DecorationImage(
                           image: AssetImage('assets/images/image2.jpg'),
                           fit: BoxFit.fill))),

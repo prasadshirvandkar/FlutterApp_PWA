@@ -1,31 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/constants.dart';
 import 'package:flutterapp/core/models/product_model.dart';
-import 'package:flutterapp/persistance/user_box.dart';
+import 'package:flutterapp/core/viewmodels/favourites_crud_model.dart';
 import 'package:flutterapp/ui/views/product_details.dart';
 import 'package:palette_generator/palette_generator.dart';
 
 class ProductCard extends StatefulWidget {
   final Product productDetails;
   final int cardNum;
-  final Map<String, bool> favorites;
-  ProductCard(
-      {@required this.productDetails,
-      @required this.cardNum,
-      @required this.favorites});
+  final bool isFavourite;
+
+  ProductCard({@required this.productDetails, @required this.cardNum, this.isFavourite});
   _ProductCard createState() => _ProductCard();
 }
 
 class _ProductCard extends State<ProductCard> {
   Color color = Colors.red;
-  bool favorite;
+  bool favorite = false;
   PaletteGenerator paletteGenerator;
 
   @override
   void initState() {
     super.initState();
-    favorite = isFavorite(widget.productDetails.productId);
     //_getImagePalette(AssetImage('assets/images/image8.jpg'));
+    favorite = widget.isFavourite;
   }
 
   /* _getImagePalette(AssetImage assetImage) async {
@@ -43,7 +41,8 @@ class _ProductCard extends State<ProductCard> {
                   context,
                   MaterialPageRoute(
                       builder: (_) => ProductDetails(
-                          productDetails: widget.productDetails)))
+                          productDetails: widget.productDetails,
+                          isFavourite: favorite)))
             },
         onLongPress: () => {_showDialog()},
         child: Container(
@@ -109,8 +108,7 @@ class _ProductCard extends State<ProductCard> {
                                             setState(() {
                                               favorite = !favorite;
                                               addToFavorites(
-                                                  widget
-                                                      .productDetails.productId,
+                                                  widget.productDetails,
                                                   favorite);
                                             })
                                           },
@@ -128,15 +126,14 @@ class _ProductCard extends State<ProductCard> {
         )));
   }
 
-  bool isFavorite(String productId) {
-    return widget.favorites[productId] != null
-        ? widget.favorites[productId]
-        : false;
-  }
-
-  void addToFavorites(String productId, bool favoriteValue) {
-    widget.favorites[productId] = favoriteValue;
-    UserBox.userBoxC.addValue(Constants.FAVORITES, widget.favorites);
+  void addToFavorites(Product product, bool favoriteValue) {
+    if (favoriteValue) {
+      FavouritesCRUDModel.favouritesCRUDModel
+          .addFavourite(product, 'sdadasdasd12e123132');
+    } else {
+      FavouritesCRUDModel.favouritesCRUDModel
+          .removeFavourite(product.productId, 'sdadasdasd12e123132');
+    }
   }
 
   void _showDialog() {
@@ -158,9 +155,7 @@ class _ProductCard extends State<ProductCard> {
                               fontSize: 18.0,
                               color: Colors.blue,
                               fontWeight: FontWeight.bold))),
-                  onPressed: () {
-
-                  },
+                  onPressed: () {},
                 ),
                 SizedBox(height: 8.0),
                 FlatButton(

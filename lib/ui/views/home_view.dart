@@ -1,6 +1,10 @@
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterapp/constants.dart';
+import 'package:flutterapp/core/models/product_model.dart';
+import 'package:flutterapp/core/viewmodels/favourites_crud_model.dart';
 import 'package:flutterapp/core/viewmodels/product_crud_model.dart';
 import 'package:flutterapp/persistance/user_box.dart';
 import 'package:flutterapp/ui/views/cart_view.dart';
@@ -16,28 +20,25 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeView extends State<HomeView> {
-  final Stream<QuerySnapshot> _productsStream =
-      ProductCRUDModel.productCRUDModel.fetchProductsAsStream();
-
-  final List<String> categories = new List<String>();
+  final List<String> categories = new List();
   bool isSignedIn = false;
-  var favorites;
   int home = 1;
+  Widget _animatedWidget;
+
+  Set<String> favourites = new HashSet();
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      categories.add('Cakes');
-      categories.add('Cookies');
-      categories.add('Chocolates');
-      categories.add('Biscuits');
       isSignedIn = UserBox.userBoxC.getBoolValue(Constants.IS_SIGNED_IN);
-      favorites = UserBox.userBoxC.getUserFavorites(Constants.FAVORITES);
-      if (favorites == null) {
-        favorites = new Map<String, bool>();
-      }
-      print(favorites);
+      _animatedWidget = _homeView();
+    });
+
+    _loadFavourites().then((List<Product> products) => {
+      setState(() {
+        favourites = products.map((product) => product.productId).toSet();
+      })
     });
   }
 
@@ -49,7 +50,7 @@ class _HomeView extends State<HomeView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Gaurav Bakes',
+        title: Text('Bakes',
             style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.w800)),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -84,39 +85,26 @@ class _HomeView extends State<HomeView> {
         },
         child: Icon(Icons.add),
       ),
-      body: (home != 2)
-          ? Container(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  /* Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text('Explore',
-                        style: TextStyle(
-                            fontSize: 32.0, fontWeight: FontWeight.bold)),
-                  ), */
-                  CategorySelector(categories: [
-                    'Cakes',
-                    'Chocolates',
-                    'Cookies',
-                    'Biscuits'
-                  ]),
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  ProductCards(
-                      productsStream: _productsStream, favorites: favorites)
-                ]))
-          : UserInfo(),
+      body: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 200),
+          transitionBuilder: (Widget child, Animation<double> animation) {
+            return ScaleTransition(child: child, scale: animation);
+          },
+          child: _animatedWidget),
       bottomNavigationBar: AnimatedBottomBar(onBarTap: (index) {
         setState(() {
-          home = index;
+          switch (index) {
+            case 0:
+              _animatedWidget = _homeView();
+              break;
+            case 1:
+              _animatedWidget = _favouritesHome();
+              break;
+            case 2:
+              _animatedWidget = UserInfo();
+              break;
+          }
         });
-        print('100101: $home');
       }),
     );
   }
@@ -133,5 +121,65 @@ class _HomeView extends State<HomeView> {
         );
       },
     );
+  }
+
+  Widget _homeView() {
+    final Stream<QuerySnapshot> _productsStream =
+        ProductCRUDModel.productCRUDModel.fetchProductsAsStream();
+    return Container(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+          /* Container(
+            margin: const EdgeInsets.all(10.0),
+            decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10.0),
+                color: Colors.red.shade400),
+            height: 50,
+            child: Center(
+                child: Text(
+              'The Service is Temporarily Unavailable',
+              style: TextStyle(color: Colors.white),
+            )),
+          ), */
+          SizedBox(
+            height: 8.0,
+          ),
+          CategorySelector(
+              categories: ['Cakes', 'Chocolates', 'Cookies', 'Biscuits']),
+          SizedBox(
+            height: 8.0,
+          ),
+          ProductCards(productsStream: _productsStream, favourites: favourites)
+        ]));
+  }
+
+  Widget _favouritesHome() {
+    final Stream<QuerySnapshot> _favouritesStream = FavouritesCRUDModel
+        .favouritesCRUDModel
+        .fetchFavouritesAsStream('sdadasdasd12e123132');
+    return Container(
+        child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+          SizedBox(
+            height: 8.0,
+          ),
+          Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Text('Your Favourites',
+                style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold)),
+          ),
+          SizedBox(
+            height: 8.0,
+          ),
+          ProductCards(productsStream: _favouritesStream, favourites: favourites)
+        ]));
+  }
+
+  Future<List<Product>> _loadFavourites() async {
+    return await FavouritesCRUDModel.favouritesCRUDModel.fetchFavouritesForUser('sdadasdasd12e123132');
   }
 }

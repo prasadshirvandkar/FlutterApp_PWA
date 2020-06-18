@@ -27,7 +27,8 @@ class OrderCard extends StatelessWidget {
                 ),
                 Text(
                   orderDetails.productIds,
-                  style: TextStyle(fontSize: 20.0, color: Colors.amber.shade900),
+                  style:
+                      TextStyle(fontSize: 20.0, color: Colors.amber.shade900),
                 ),
                 SizedBox(
                   height: 16.0,
@@ -73,7 +74,48 @@ class OrderCard extends StatelessWidget {
                             width: 4),
                         onPressed: () => {},
                       ),
-                    ])
+                    ]),
+                SizedBox(height: 4.0),
+                Divider(
+                  color: Colors.black,
+                  height: 1,
+                ),
+                SizedBox(height: 4.0),
+                ButtonBar(
+                  mainAxisSize: MainAxisSize.max,
+                  //alignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    RaisedButton(
+                      shape: StadiumBorder(),
+                      child: 
+                        Padding(
+                          padding: EdgeInsets.only(
+                            top: 10.0, bottom: 10.0,
+                            left: 24.0, right: 24.0
+                          ),
+                          child: Text('Reject', style: TextStyle(color: Colors.white, fontSize: 18.0))
+                        ),
+                      color: Colors.red,
+                      onPressed: () {
+
+                      },
+                    ),
+                    RaisedButton(
+                      shape: StadiumBorder(),
+                      child: Padding(
+                          padding: EdgeInsets.only(
+                            top: 10.0, bottom: 10.0,
+                            left: 24.0, right: 24.0
+                          ),
+                          child: Text('Accept', style: TextStyle(color: Colors.white, fontSize: 18.0))
+                        ),
+                      color: Colors.green,
+                      onPressed: () {
+
+                      },
+                    ),
+                  ],
+                ),
               ],
             )));
   }

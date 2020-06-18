@@ -24,7 +24,7 @@ class _MyApp extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Gaurav Bakes',
+      title: 'Bakes',
       initialRoute: Constants.INITIAL_PAGE,
       theme: ThemeData(
         //fontFamily: 'Montserrat',

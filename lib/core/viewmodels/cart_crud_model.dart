@@ -32,7 +32,7 @@ class CartCRUDModel extends ChangeNotifier {
     double totalPrice = 0.0;
     if(result.isNotEmpty) {
       totalPrice = result
-        .map((e) => double.parse(e.productPrice))
+        .map((cartItem) => double.parse(cartItem.productPrice) * double.parse(cartItem.quantity))
         .reduce((value, element) => value + element);
     }
     return totalPrice.toString();

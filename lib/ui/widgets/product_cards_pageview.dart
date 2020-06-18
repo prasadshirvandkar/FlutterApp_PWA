@@ -6,8 +6,8 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 
 class ProductCards extends StatelessWidget {
   final Stream<QuerySnapshot> productsStream;
-  final Map<String, bool> favorites;
-  ProductCards({this.productsStream, this.favorites});
+  final Set<String> favourites;
+  ProductCards({this.productsStream, this.favourites});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class ProductCards extends StatelessWidget {
                           .map((doc) =>
                               Product.fromMap(doc.data, doc.documentID))
                           .toList();
-                      return snapshot.hashCode != null
+                      return snapshot.hasData != null
                           ? PageView.builder(
                               itemCount: products.length,
                               physics: BouncingScrollPhysics(),
@@ -46,8 +46,8 @@ class ProductCards extends StatelessWidget {
                                   child: ProductCard(
                                       productDetails: products[index],
                                       cardNum: index,
-                                      favorites: favorites)))
-                          : Text('Error');
+                                      isFavourite: favourites.contains(products[index].productId))))
+                          : Center(child:Text('No Favourites Available'));
                   }
                 })));
   }

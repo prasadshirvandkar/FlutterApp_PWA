@@ -8,7 +8,8 @@ import '../../core/models/product_model.dart';
 class ProductDetails extends StatefulWidget {
   final Product productDetails;
   final Color paletteColor;
-  ProductDetails({this.productDetails, this.paletteColor});
+  final bool isFavourite;
+  ProductDetails({this.productDetails, this.paletteColor, this.isFavourite});
 
   _ProductDetails createState() => _ProductDetails();
 }
@@ -16,7 +17,7 @@ class ProductDetails extends StatefulWidget {
 class _ProductDetails extends State<ProductDetails> {
   List<String> images = new List<String>();
   String price = '';
-  bool isFavorite = false;
+  bool isFavorite;
   Color color;
   Color textColor;
 
@@ -33,6 +34,7 @@ class _ProductDetails extends State<ProductDetails> {
       price = double.parse(widget.productDetails.price).toString();
       color = Colors.blue;
       textColor = color.computeLuminance() > 0.5 ? Colors.black : Colors.white;
+      isFavorite = widget.isFavourite;
       //user = User.fromMap(UserBox.userBoxC.getUserObject(Constants.USER_INFO));
     });
   }
@@ -196,10 +198,6 @@ class _ProductDetails extends State<ProductDetails> {
       var existingCartData = result.documents[0].data;
       existingCartData['quantity'] =
           (int.parse(existingCartData['quantity']) + 1).toString();
-      existingCartData['productPrice'] =
-          (double.parse(existingCartData['productPrice']) +
-                  double.parse(widget.productDetails.price))
-              .toString();
       Cart cartData = Cart.fromMap(existingCartData, result.documents[0].documentID);
       await CartCRUDModel.cartCRUDModel.updateCart('sdadasdasd12e123132', cartData, cartData.cartId);
     } else {

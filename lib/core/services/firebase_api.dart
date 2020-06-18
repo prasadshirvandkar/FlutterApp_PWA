@@ -45,6 +45,14 @@ class FirestoreAPI {
         .add(data);
   }
 
+  Future<DocumentReference> addDocumentToCollectionWithDocID(
+      String id, String collectionName, Map data, documentId) {
+    return collectionReference
+        .document(id)
+        .collection(collectionName)
+        .document(documentId).setData(data);
+  }
+
   Future<QuerySnapshot> getDocumentsCollection(
       String id, String collectionName) {
     return collectionReference

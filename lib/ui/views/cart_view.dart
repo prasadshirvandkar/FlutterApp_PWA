@@ -129,7 +129,7 @@ class _CartView extends State<CartView> {
   }
 
   noItemsInCart() {
-    Column(
+    return Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
@@ -138,11 +138,11 @@ class _CartView extends State<CartView> {
                   Text('No Items in Cart', style: TextStyle(fontSize: 20.0))),
           SizedBox(height: 16.0),
           RaisedButton(
-              color: Colors.blue,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              onPressed: () {},
+              color: Colors.orange,
+              shape: StadiumBorder(),
+              onPressed: () {
+                Navigator.pop(context);
+              },
               child: Padding(
                   padding: EdgeInsets.all(16.0),
                   child: Text('Continue Shopping',
