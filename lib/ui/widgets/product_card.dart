@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/constants.dart';
 import 'package:flutterapp/core/models/product_model.dart';
 import 'package:flutterapp/core/viewmodels/favourites_crud_model.dart';
+import 'package:flutterapp/core/viewmodels/product_crud_model.dart';
 import 'package:flutterapp/ui/views/product_details.dart';
 import 'package:palette_generator/palette_generator.dart';
 
@@ -10,7 +11,10 @@ class ProductCard extends StatefulWidget {
   final int cardNum;
   final bool isFavourite;
 
-  ProductCard({@required this.productDetails, @required this.cardNum, this.isFavourite});
+  ProductCard(
+      {@required this.productDetails,
+      @required this.cardNum,
+      this.isFavourite});
   _ProductCard createState() => _ProductCard();
 }
 
@@ -155,7 +159,9 @@ class _ProductCard extends State<ProductCard> {
                               fontSize: 18.0,
                               color: Colors.blue,
                               fontWeight: FontWeight.bold))),
-                  onPressed: () {},
+                  onPressed: () {
+                    
+                  },
                 ),
                 SizedBox(height: 8.0),
                 FlatButton(
@@ -166,7 +172,11 @@ class _ProductCard extends State<ProductCard> {
                               fontSize: 18.0,
                               color: Colors.red,
                               fontWeight: FontWeight.bold))),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pop(context);
+                    ProductCRUDModel.productCRUDModel
+                        .removeProduct(widget.productDetails.productId);
+                  },
                 )
               ],
             )

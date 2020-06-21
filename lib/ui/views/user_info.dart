@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutterapp/core/models/order_model.dart';
 import 'package:flutterapp/core/viewmodels/order_crud_model.dart';
+import 'package:flutterapp/ui/views/address_data.dart';
 import 'package:flutterapp/ui/widgets/order_card.dart';
 
 class UserInfo extends StatefulWidget {
@@ -12,7 +13,7 @@ class _UserInfo extends State<UserInfo> {
   List<Order> myOrders = new List();
   final Stream<QuerySnapshot> _cartsStream =
       OrderCRUDModel.orderCRUDModel.fetchOrdersAsStream('sdadasdasd12e123132');
-
+  String address, commaSeperatedAddress;
   String name, id, imageUrl, email;
   /* Map<String, dynamic> userMap =
       UserBox.userBoxC.getUserObject(Constants.USER_INFO); */
@@ -26,6 +27,8 @@ class _UserInfo extends State<UserInfo> {
     name = 'Name Username'; //user.name;
     imageUrl = 'asdasd'; //user.imageUrl;
     email = 'shirvandkar.prasad@gmail.com'; //user.email;
+    address = '10/707|Abhyudaya Nagar, Kalachowki|Mumbai|400033';
+    _getCommaSeperatedAddress();
   }
 
   @override
@@ -89,7 +92,20 @@ class _UserInfo extends State<UserInfo> {
                                         fontSize: 16.0,
                                         color: Colors.blue.shade700)),
                                 InkWell(
-                                    onTap: () => {},
+                                    onTap: () async {
+                                      var result = await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) => AddressData(
+                                                  operation: 'Edit',
+                                                  existingAddress: address)));
+                                      setState(() {
+                                        if(result != null) {
+                                          address = result;
+                                          _getCommaSeperatedAddress();
+                                        }
+                                      });
+                                    },
                                     child: Text('Edit',
                                         style: TextStyle(
                                             color: Colors.grey,
@@ -97,8 +113,7 @@ class _UserInfo extends State<UserInfo> {
                               ],
                             ),
                             SizedBox(height: 16.0),
-                            Text(
-                                'akjsdbfkjbasdfbakjsbjkfjaskdb dsf bkaf asdff afsdfsd sadf sdf',
+                            Text('$commaSeperatedAddress',
                                 style: TextStyle(
                                   fontSize: 18.0,
                                 )),
@@ -113,7 +128,8 @@ class _UserInfo extends State<UserInfo> {
               Container(
                   child: StreamBuilder(
                       stream: _cartsStream,
-                      builder:(context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      builder:
+                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                         if (snapshot.hasData) {
                           List<DocumentSnapshot> documents =
                               snapshot.data.documents;
@@ -126,7 +142,7 @@ class _UserInfo extends State<UserInfo> {
                                 itemCount: myOrders.length,
                                 scrollDirection: Axis.vertical,
                                 shrinkWrap: true,
-                                primary: false, 
+                                primary: false,
                                 itemBuilder: (buildContext, index) =>
                                     OrderCard(orderDetails: myOrders[index]));
                           } else {
@@ -149,5 +165,11 @@ class _UserInfo extends State<UserInfo> {
             ],
           )),
     );
+  }
+
+  _getCommaSeperatedAddress() {
+    setState(() {
+      commaSeperatedAddress = address.replaceAll('|', ',');
+    });
   }
 }

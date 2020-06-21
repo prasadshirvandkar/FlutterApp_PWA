@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/core/services/firebase_google_authentication.dart';
+import 'package:flutterapp/ui/views/address_data.dart';
 
 class GoogleSignInButton extends StatelessWidget {
   @override
@@ -12,6 +13,8 @@ class GoogleSignInButton extends StatelessWidget {
                   FirebaseGoogleAuthentication.signInWithGoogle()
                       .whenComplete(() {
                     Navigator.pop(context);
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (_) => AddressData(operation: 'Add')));
                   })
                 },
             child: Container(

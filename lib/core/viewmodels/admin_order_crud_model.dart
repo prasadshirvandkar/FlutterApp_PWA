@@ -50,6 +50,10 @@ class AdminOrdersCRUDModel extends ChangeNotifier {
     await firestoreAPI.updateDocumentToCollection(userId, _collectionOrders, id, data.toJson());
   }
 
+  Future addOrderWithCustomID(Order data, String userId) async {
+    await firestoreAPI.addDocumentToCollectionWithDocID(userId, _collectionOrders, data.toJson(), data.orderId);
+  }
+
   Future addOrder(Order data, String orderType) async {
     await firestoreAPI.addDocumentToCollection(orderType, _collectionOrders, data.toJson());
   }

@@ -24,7 +24,6 @@ class _HomeView extends State<HomeView> {
   bool isSignedIn = false;
   int home = 1;
   Widget _animatedWidget;
-
   Set<String> favourites = new HashSet();
 
   @override
@@ -80,7 +79,7 @@ class _HomeView extends State<HomeView> {
                             borderRadius: new BorderRadius.only(
                                 topLeft: const Radius.circular(20.0),
                                 topRight: const Radius.circular(20.0))),
-                        child: AddProduct()));
+                        child: AddProduct(operation: 1, existingProduct: null)));
               })
         },
         child: Icon(Icons.add),

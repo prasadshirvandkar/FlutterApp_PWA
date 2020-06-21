@@ -52,6 +52,10 @@ class OrderCRUDModel extends ChangeNotifier {
     await firestoreAPI.updateDocumentToCollection(userId, _collectionOrders, id, data.toJson());
   }
 
+  Future addOrderWithCustomID(Order data, String userId) async {
+    await firestoreAPI.addDocumentToCollectionWithDocID(userId, _collectionOrders, data.toJson(), data.orderId);
+  }
+
   Future addOrder(Order data, String userId) async {
     await firestoreAPI.addDocumentToCollection(userId, _collectionOrders, data.toJson());
   }

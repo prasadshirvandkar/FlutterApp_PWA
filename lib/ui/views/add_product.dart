@@ -1,17 +1,17 @@
-import 'dart:typed_data';
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutterapp/core/models/image_upload_model.dart';
 import 'package:flutterapp/core/models/product_model.dart';
 import 'package:flutterapp/core/viewmodels/product_crud_model.dart';
 
 class AddProduct extends StatefulWidget {
+  final int operation;
+  final Product existingProduct;
+  AddProduct({this.operation, this.existingProduct});
   _AddProduct createState() => _AddProduct();
 }
 
 class _AddProduct extends State<AddProduct> {
   final _formKey = GlobalKey<FormState>();
-  String productTitle;
+  String productName;
   String productPrice;
   String productCategory = "Cake";
   String productDescription;
@@ -50,26 +50,28 @@ class _AddProduct extends State<AddProduct> {
                           style: TextStyle(
                               fontSize: 18.0, fontWeight: FontWeight.bold)),
                       SizedBox(height: 20.0),
-                      buildTextFormFiled(
-                          productTitle, 'Product Name', TextInputType.text),
+                      buildTextFormFiled(productName, 'Product Name',
+                          TextInputType.text, _onProductNameChanged),
                       SizedBox(height: 16),
-                      buildTextFormFiled(productPrice, 'Product Price',
-                          TextInputType.numberWithOptions()),
+                      buildTextFormFiled(
+                          productPrice,
+                          'Product Price',
+                          TextInputType.numberWithOptions(),
+                          _onProductPriceChanged),
                       SizedBox(height: 12),
                       getDropDown(),
                       SizedBox(height: 12),
-                      buildTextFormFiled(productDescription,
-                          'Product Description', TextInputType.multiline),
+                      buildTextFormFiled(
+                          productDescription,
+                          'Product Description',
+                          TextInputType.multiline,
+                          _onProductDescChanged),
                       SizedBox(height: 16),
                       buildTextFormFiled(productAvgTime, 'Average Making Time',
-                          TextInputType.text),
+                          TextInputType.text, _onProductAvgTimeChanged),
                       SizedBox(height: 16),
-                      buildTextFormFiled(
-                          productWeight, 'Product Weight', TextInputType.text),
-                      /* SizedBox(height: 16.0),
-                      Text('Add Images'),
-                      SizedBox(height: 8.0),
-                      Container(child: buildGridView()), */
+                      buildTextFormFiled(productWeight, 'Product Weight',
+                          TextInputType.text, _onProductWeightChanged),
                       SizedBox(height: 16.0),
                       Center(
                           child: RaisedButton(
@@ -79,14 +81,7 @@ class _AddProduct extends State<AddProduct> {
                                 if (_formKey.currentState.validate()) {
                                   _formKey.currentState.save();
                                   await ProductCRUDModel.productCRUDModel
-                                      .addProduct(Product(
-                                          name: productTitle,
-                                          price: productPrice,
-                                          category: productCategory,
-                                          description: productDescription,
-                                          averageMakingTime: productAvgTime,
-                                          quantity: productQuantity,
-                                          weight: productQuantity));
+                                      .addProduct(_getProduct());
                                   Navigator.pop(context);
                                 }
                               },
@@ -104,27 +99,28 @@ class _AddProduct extends State<AddProduct> {
                 ))));
   }
 
-  Widget buildTextFormFiled(
-      String key, String hintText, TextInputType textInputType) {
+  Widget buildTextFormFiled(key, hintText, textInputType, onChangedCallback) {
     return TextFormField(
-      keyboardType: textInputType,
-      decoration: InputDecoration(
-          border: new OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10.0),
-              borderSide: BorderSide(
-                width: 0,
-                style: BorderStyle.none,
-              )),
-          hintText: hintText,
-          fillColor: Colors.grey.shade300,
-          filled: true),
-      validator: (value) {
-        return value.isEmpty ? 'Please enter $hintText' : null;
-      },
-      onChanged: (value) => {
-        setState(() => {key = value})
-      },
-    );
+        keyboardType: textInputType,
+        decoration: _getInputDecoration(hintText),
+        validator: (value) {
+          return value.isEmpty ? 'Please enter $hintText' : null;
+        },
+        onChanged: onChangedCallback);
+  }
+
+  _getInputDecoration(hintText) {
+    return InputDecoration(
+        contentPadding: EdgeInsets.all(26.0),
+        border: new OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10.0),
+            borderSide: BorderSide(
+              width: 0,
+              style: BorderStyle.none,
+            )),
+        hintText: hintText,
+        fillColor: Colors.grey.shade300,
+        filled: true);
   }
 
   Widget getDropDown() {
@@ -150,77 +146,34 @@ class _AddProduct extends State<AddProduct> {
                 })));
   }
 
-  /* Widget buildGridView() {
-    return GridView.count(
-      shrinkWrap: true,
-      crossAxisCount: 4,
-      childAspectRatio: 1,
-      children: List.generate(images.length, (index) {
-        if (images[index] is ImageUploadModel) {
-          ImageUploadModel uploadModel = images[index];
-          return Card(
-            clipBehavior: Clip.antiAlias,
-            child: Stack(
-              children: <Widget>[
-                Image(
-                    image: uploadModel.imageFile.image,
-                    width: 300,
-                    height: 300),
-                Positioned(
-                  right: 5,
-                  top: 5,
-                  child: InkWell(
-                    child: Icon(
-                      Icons.remove_circle,
-                      size: 20,
-                      color: Colors.red,
-                    ),
-                    onTap: () {
-                      setState(() {
-                        images.replaceRange(index, index + 1, ['Add Image']);
-                      });
-                    },
-                  ),
-                ),
-              ],
-            ),
-          );
-        } else {
-          return Card(
-            child: IconButton(
-              icon: Icon(Icons.add),
-              onPressed: () {
-                _onAddImageClick(index);
-              },
-            ),
-          );
-        }
-      }),
-    );
+  _onProductNameChanged(String value) {
+    setState(() => productName = value);
   }
 
-  _onAddImageClick(int index) async {
-    Uint8List image = await ImagePickerWeb.getImage(outputType: ImageType.bytes);
-    if (image != null) {
-      setState(() {
-        ImageUploadModel imageUpload = new ImageUploadModel();
-        imageUpload.isUploaded = false;
-        imageUpload.uploading = false;
-        imageUpload.imageFile = Image.memory(image);
-        imageUpload.imageData = image;
-        imageUpload.imageUrl = '';
-        images.replaceRange(index, index + 1, [imageUpload]);
-      });
-    }
-
-    //String asd = String.fromCharCodes(image);
-    String asdsadasd = utf8.decode(image);
-    List<int> bytes = utf8.encode(asdsadasd);
-    print(bytes.length);
+  _onProductPriceChanged(String value) {
+    setState(() => productPrice = value);
   }
 
-  _uploadImagesToFirebaseStorage() {
+  _onProductDescChanged(String value) {
+    setState(() => productDescription = value);
+  }
 
-  } */
-  
+  _onProductAvgTimeChanged(String value) {
+    setState(() => productAvgTime = value);
+  }
+
+  _onProductWeightChanged(String value) {
+    setState(() => productWeight = value);
+  }
+
+  Product _getProduct() {
+    return Product(
+        name: productName,
+        price: productPrice,
+        category: productCategory,
+        description: productDescription,
+        averageMakingTime: productAvgTime,
+        quantity: productQuantity,
+        weight: productQuantity);
+  }
 }
