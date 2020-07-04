@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/constants.dart';
+import 'package:flutterapp/core/viewmodels/address_crud_model.dart';
+import 'package:flutterapp/persistance/user_box.dart';
 
 class AddressData extends StatefulWidget {
   final String operation;
@@ -69,6 +72,14 @@ class _AddressData extends State<AddressData> {
               if (_formKey.currentState.validate()) {
                 _formKey.currentState.save();
                 fullAddress = '$houseName| $streetName| $landmark| $pinCode';
+                if (widget.operation == 'Add') {
+                  AddressCRUDModel.addressCRUDModel
+                      .addAddress('sdadasdasd12e123132', fullAddress);
+                  UserBox.userBoxC.addValue(Constants.IS_SIGNED_IN, true);
+                } else {
+                  AddressCRUDModel.addressCRUDModel
+                      .updateAddress('sdadasdasd12e123132', fullAddress);
+                }
                 Navigator.pop(context, fullAddress);
               }
             },

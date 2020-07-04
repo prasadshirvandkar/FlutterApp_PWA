@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/core/models/cart_model.dart';
 import 'package:flutterapp/core/viewmodels/cart_crud_model.dart';
 import 'package:flutterapp/ui/views/cart_confirmation_view.dart';
-import 'package:flutterapp/ui/widgets/cart_card.dart';
 
 class CartView extends StatefulWidget {
   final List<Cart> cartItems;
@@ -47,9 +46,88 @@ class _CartView extends State<CartView> {
                           .toList();
                       return ListView.builder(
                           itemCount: cartItems.length,
-                          itemBuilder: (buildContext, index) => CartCard(
+                          itemBuilder: (buildContext, index) {
+                            var cartItem = cartItems[index];
+                            return Card(
+                                margin: EdgeInsets.only(
+                                    left: 16.0,
+                                    right: 16.0,
+                                    top: 8.0,
+                                    bottom: 8.0),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                elevation: 4.0,
+                                child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: ListTile(
+                                      leading: Container(
+                                          height: 120.0,
+                                          width: 50.0,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(10.0),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.2),
+                                                    offset: Offset(0, 8.0),
+                                                    blurRadius: 16)
+                                              ],
+                                              image: DecorationImage(
+                                                  image: AssetImage(
+                                                      'assets/images/image2.jpg'),
+                                                  fit: BoxFit.fill))),
+                                      title: Text('${cartItem.productName}',
+                                          style: TextStyle(fontSize: 18.0)),
+                                      subtitle: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 6.0),
+                                          Text(
+                                              '\u{20B9} ${cartItem.productPrice}',
+                                              style: TextStyle(
+                                                  fontSize: 18.0,
+                                                  color:
+                                                      Colors.orange.shade900)),
+                                          SizedBox(height: 6.0),
+                                          Text(
+                                              'Quantity: ${cartItem.quantity}'),
+                                          SizedBox(height: 6.0),
+                                          TextField(
+                                            
+                                          )
+                                          /* RaisedButton(
+                                              onPressed: () => {},
+                                              shape: StadiumBorder(),
+                                              color: Colors.orange,
+                                              child: Padding(
+                                                  padding: EdgeInsets.all(4.0),
+                                                  child: Text(
+                                                    'Add Message',
+                                                    style: TextStyle(
+                                                        color: Colors.white),
+                                                  ))) */
+                                        ],
+                                      ),
+                                      trailing: InkWell(
+                                          onTap: () => {
+                                                setState(() {
+                                                  removeItem(index);
+                                                })
+                                              },
+                                          child: Icon(
+                                            Icons.remove_circle_outline,
+                                            color: Colors.red,
+                                          )),
+                                      isThreeLine: true,
+                                    )));
+                          });
+                      /* CartCard(
                               cartDetails: cartItems[index],
-                              onDelete: () => removeItem(index)));
+                              onDelete: () => removeItem(index))) */
                     } else {
                       return noItemsInCart();
                     }
@@ -122,6 +200,8 @@ class _CartView extends State<CartView> {
 
   void removeItem(int index) {
     setState(() {
+      totalPrice -= (double.parse(cartItems[index].productPrice) *
+          double.parse(cartItems[index].quantity));
       CartCRUDModel.cartCRUDModel
           .removeItemFromCart('sdadasdasd12e123132', cartItems[index].cartId);
       cartItems.removeAt(index);

@@ -45,6 +45,28 @@ class ProductCRUDModel extends ChangeNotifier {
     await firestoreAPI.addDocument(data.toJson());
   }
 
+  /* Stream<QuerySnapshot> fetchProductsAsStream(String category) {
+    return firestoreAPI.getStreamDocumentCollection(category, _collectionProducts);
+  }
+
+  Future<Product> getProductById(String category, String id) async {
+    var doc = await firestoreAPI.getDocumentCollectionById(category, _collectionProducts, id);
+    return Product.fromMap(doc.data, doc.documentID);
+  }
+
+  Future removeProduct(String category, String id) async {
+    await firestoreAPI.removeDocumentCollection(category, _collectionProducts, id);
+    return;
+  }
+
+  Future updateProduct(String category, Product data, String id) async {
+    await firestoreAPI.updateDocumentToCollection(category, _collectionProducts, id, data.toJson());
+  }
+
+  Future addProduct(String category, Product data) async {
+    await firestoreAPI.addDocumentToCollection(category, _collectionProducts, data.toJson());
+  } */
+
   void onChange() {
     notifyListeners();
   }

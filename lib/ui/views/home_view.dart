@@ -1,18 +1,17 @@
 import 'dart:collection';
 
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutterapp/constants.dart';
+import 'package:flutterapp/core/models/appdata_model.dart';
 import 'package:flutterapp/core/models/product_model.dart';
+import 'package:flutterapp/core/viewmodels/appdata_crud_model.dart';
 import 'package:flutterapp/core/viewmodels/favourites_crud_model.dart';
-import 'package:flutterapp/core/viewmodels/product_crud_model.dart';
 import 'package:flutterapp/persistance/user_box.dart';
 import 'package:flutterapp/ui/views/cart_view.dart';
 import 'package:flutterapp/ui/views/user_info.dart';
 import 'package:flutterapp/ui/widgets/animated_bottombar.dart';
-import 'package:flutterapp/ui/widgets/category_selector.dart';
 import 'package:flutterapp/ui/widgets/google_signin_button.dart';
-import 'package:flutterapp/ui/widgets/product_cards_pageview.dart';
+import 'package:flutterapp/ui/widgets/home_widgets.dart';
 import 'add_product.dart';
 
 class HomeView extends StatefulWidget {
@@ -20,24 +19,31 @@ class HomeView extends StatefulWidget {
 }
 
 class _HomeView extends State<HomeView> {
-  final List<String> categories = new List();
   bool isSignedIn = false;
   int home = 1;
   Widget _animatedWidget;
   Set<String> favourites = new HashSet();
+  bool isServiceUp = false;
 
   @override
   void initState() {
     super.initState();
+    _loadFavourites().then((List<Product> products) => {
+          setState(() {
+            favourites = products.map((product) => product.productId).toSet();
+          })
+        });
+
+    _checkIfServiceIsUp().then((value) => {
+          setState(() {
+            isServiceUp = value.isServiceUp;
+            UserBox.userBoxC.addValue(Constants.IS_SERVICE_UP, isServiceUp);
+          })
+        });
+
     setState(() {
       isSignedIn = UserBox.userBoxC.getBoolValue(Constants.IS_SIGNED_IN);
-      _animatedWidget = _homeView();
-    });
-
-    _loadFavourites().then((List<Product> products) => {
-      setState(() {
-        favourites = products.map((product) => product.productId).toSet();
-      })
+      _animatedWidget = HomeWidget.homeView(true, favourites);
     });
   }
 
@@ -49,8 +55,10 @@ class _HomeView extends State<HomeView> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Bakes',
-            style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.w800)),
+        title: Column(children: [
+          Text('Bakes',
+              style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.w800))
+        ]),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
@@ -79,7 +87,8 @@ class _HomeView extends State<HomeView> {
                             borderRadius: new BorderRadius.only(
                                 topLeft: const Radius.circular(20.0),
                                 topRight: const Radius.circular(20.0))),
-                        child: AddProduct(operation: 1, existingProduct: null)));
+                        child:
+                            AddProduct(operation: 1, existingProduct: null)));
               })
         },
         child: Icon(Icons.add),
@@ -94,10 +103,10 @@ class _HomeView extends State<HomeView> {
         setState(() {
           switch (index) {
             case 0:
-              _animatedWidget = _homeView();
+              _animatedWidget = HomeWidget.homeView(isServiceUp, favourites);
               break;
             case 1:
-              _animatedWidget = _favouritesHome();
+              _animatedWidget = HomeWidget.favouritesHome(favourites);
               break;
             case 2:
               _animatedWidget = UserInfo();
@@ -122,63 +131,12 @@ class _HomeView extends State<HomeView> {
     );
   }
 
-  Widget _homeView() {
-    final Stream<QuerySnapshot> _productsStream =
-        ProductCRUDModel.productCRUDModel.fetchProductsAsStream();
-    return Container(
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-          /* Container(
-            margin: const EdgeInsets.all(10.0),
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10.0),
-                color: Colors.red.shade400),
-            height: 50,
-            child: Center(
-                child: Text(
-              'The Service is Temporarily Unavailable',
-              style: TextStyle(color: Colors.white),
-            )),
-          ), */
-          SizedBox(
-            height: 8.0,
-          ),
-          CategorySelector(
-              categories: ['Cakes', 'Chocolates', 'Cookies', 'Biscuits']),
-          SizedBox(
-            height: 8.0,
-          ),
-          ProductCards(productsStream: _productsStream, favourites: favourites)
-        ]));
-  }
-
-  Widget _favouritesHome() {
-    final Stream<QuerySnapshot> _favouritesStream = FavouritesCRUDModel
-        .favouritesCRUDModel
-        .fetchFavouritesAsStream('sdadasdasd12e123132');
-    return Container(
-        child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-          SizedBox(
-            height: 8.0,
-          ),
-          Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Text('Your Favourites',
-                style: TextStyle(fontSize: 32.0, fontWeight: FontWeight.bold)),
-          ),
-          SizedBox(
-            height: 8.0,
-          ),
-          ProductCards(productsStream: _favouritesStream, favourites: favourites)
-        ]));
-  }
-
   Future<List<Product>> _loadFavourites() async {
-    return await FavouritesCRUDModel.favouritesCRUDModel.fetchFavouritesForUser('sdadasdasd12e123132');
+    return await FavouritesCRUDModel.favouritesCRUDModel
+        .fetchFavouritesForUser('sdadasdasd12e123132');
+  }
+
+  Future<AppData> _checkIfServiceIsUp() async {
+    return await AppDataCRUDModel.appDataCRUDModel.getAppDataById();
   }
 }

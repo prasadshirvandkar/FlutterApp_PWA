@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutterapp/constants.dart';
 import 'package:flutterapp/core/models/cart_model.dart';
 import 'package:flutterapp/core/viewmodels/cart_crud_model.dart';
+import 'package:flutterapp/persistance/user_box.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/models/product_model.dart';
 
@@ -20,6 +22,7 @@ class _ProductDetails extends State<ProductDetails> {
   bool isFavorite;
   Color color;
   Color textColor;
+  bool isServiceUp;
 
   //User user;
 
@@ -27,6 +30,7 @@ class _ProductDetails extends State<ProductDetails> {
   void initState() {
     super.initState();
     setState(() {
+      isServiceUp = UserBox.userBoxC.getBoolValue(Constants.IS_SERVICE_UP);
       images.add('assets/images/image8.jpg');
       images.add('assets/images/image9.jpg');
       images.add('assets/images/image1.jpg');
@@ -170,20 +174,9 @@ class _ProductDetails extends State<ProductDetails> {
                         height: 20.0,
                       ),
                       Align(
-                          alignment: Alignment.bottomRight,
-                          child: RaisedButton(
-                              onPressed: () async => {
-                                    //await CartCRUDModel.cartCRUDModel.addCart(getCartData(), 'sdadasdasd12e123132')
-                                    _addToCart()
-                                  },
-                              color: Colors.amber,
-                              shape: StadiumBorder(),
-                              child: Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Text('Add To Cart',
-                                    style: TextStyle(
-                                        color: Colors.white, fontSize: 18.0)),
-                              )))
+                        alignment: Alignment.bottomRight,
+                        child: isServiceUp ? _addToCartButton() : _closedButton()
+                      )
                     ],
                   ),
                 ),
@@ -193,16 +186,20 @@ class _ProductDetails extends State<ProductDetails> {
 
   _addToCart() async {
     QuerySnapshot result = await CartCRUDModel.cartCRUDModel
-        .checkIfProductExistsInCart('sdadasdasd12e123132', widget.productDetails.productId);
+        .checkIfProductExistsInCart(
+            'sdadasdasd12e123132', widget.productDetails.productId);
     if (result.documents.isNotEmpty) {
       var existingCartData = result.documents[0].data;
       existingCartData['quantity'] =
           (int.parse(existingCartData['quantity']) + 1).toString();
-      Cart cartData = Cart.fromMap(existingCartData, result.documents[0].documentID);
-      await CartCRUDModel.cartCRUDModel.updateCart('sdadasdasd12e123132', cartData, cartData.cartId);
+      Cart cartData =
+          Cart.fromMap(existingCartData, result.documents[0].documentID);
+      await CartCRUDModel.cartCRUDModel
+          .updateCart('sdadasdasd12e123132', cartData, cartData.cartId);
     } else {
-      await CartCRUDModel.cartCRUDModel.addCart(getCartData(), 'sdadasdasd12e123132');
-    }    
+      await CartCRUDModel.cartCRUDModel
+          .addCart(getCartData(), 'sdadasdasd12e123132');
+    }
   }
 
   Cart getCartData() {
@@ -217,5 +214,29 @@ class _ProductDetails extends State<ProductDetails> {
         isEggless: 'false',
         extras: '',
         dateTime: new DateTime.now().toString());
+  }
+
+  _closedButton() {
+    return RaisedButton(
+        onPressed: () => {},
+        color: Colors.red,
+        shape: StadiumBorder(),
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text('Service Temporarily Closed',
+              style: TextStyle(color: Colors.white, fontSize: 18.0)),
+        ));
+  }
+
+  _addToCartButton() {
+    return RaisedButton(
+        onPressed: () async => {_addToCart()},
+        color: Colors.amber,
+        shape: StadiumBorder(),
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text('Add To Cart',
+              style: TextStyle(color: Colors.white, fontSize: 18.0)),
+        ));
   }
 }

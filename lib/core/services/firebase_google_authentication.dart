@@ -3,7 +3,6 @@ import 'package:flutterapp/constants.dart';
 import 'package:flutterapp/core/models/user_model.dart';
 import 'package:flutterapp/persistance/user_box.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'dart:convert';
 
 class FirebaseGoogleAuthentication {
   static final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -26,7 +25,6 @@ class FirebaseGoogleAuthentication {
     assert(firebaseUser.uid == currentUser.uid);
 
     User user = User.create(firebaseUser);
-    UserBox.userBoxC.addValue(Constants.IS_SIGNED_IN, true);
     UserBox.userBoxC.addUserObject(Constants.USER_INFO, user);
 
     return 'Sign In With Google Successful: $firebaseUser';
