@@ -16,7 +16,7 @@ class UserInfo extends StatefulWidget {
 class _UserInfo extends State<UserInfo> {
   List<Order> myOrders = new List();
   final Stream<QuerySnapshot> _cartsStream =
-      OrderCRUDModel.orderCRUDModel.fetchOrdersAsStream('sdadasdasd12e123132');
+      OrderCRUDModel.orderCRUDModel.fetchOrdersAsStream(Constants.TEST_USER_ID);
   String address, commaSeperatedAddress;
   String name, id, imageUrl, email;
   bool isServiceUp;

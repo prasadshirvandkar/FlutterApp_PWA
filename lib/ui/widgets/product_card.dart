@@ -31,7 +31,8 @@ class _ProductCard extends State<ProductCard> {
   }
 
   /* _getImagePalette(AssetImage assetImage) async {
-    paletteGenerator = await PaletteGenerator.fromImageProvider(assetImage, size: Size(256.0, 170.0), maximumColorCount: 20);
+    paletteGenerator = await PaletteGenerator.fromImageProvider(assetImage, 
+    size: Size(256.0, 170.0), maximumColorCount: 20);
     setState(() {
       color = paletteGenerator.darkVibrantColor.color;
     });
@@ -133,10 +134,10 @@ class _ProductCard extends State<ProductCard> {
   void addToFavorites(Product product, bool favoriteValue) {
     if (favoriteValue) {
       FavouritesCRUDModel.favouritesCRUDModel
-          .addFavourite(product, 'sdadasdasd12e123132');
+          .addFavourite(product, Constants.TEST_USER_ID);
     } else {
       FavouritesCRUDModel.favouritesCRUDModel
-          .removeFavourite(product.productId, 'sdadasdasd12e123132');
+          .removeFavourite(product.productId, Constants.TEST_USER_ID);
     }
   }
 

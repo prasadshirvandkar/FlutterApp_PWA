@@ -7,24 +7,32 @@ class CartCRUDModel extends ChangeNotifier {
   CartCRUDModel._();
   static final CartCRUDModel cartCRUDModel = CartCRUDModel._();
   static FirestoreAPI _firestoreAPI;
+
   final String _collectionCarts = 'carts';
 
   FirestoreAPI get firestoreAPI {
     if (_firestoreAPI != null) return _firestoreAPI;
 
-    _firestoreAPI = FirestoreAPI(path: _collectionCarts);
+    _firestoreAPI = FirestoreAPI(path: 'userdata');
     return _firestoreAPI;
   }
 
   List<Cart> carts;
 
   Future<List<Cart>> fetchCartsForUser(String userId) async {
-    var result =
-        await firestoreAPI.getDocumentsCollection(userId, _collectionCarts);
+    var result = await firestoreAPI.getDocumentsCollection(userId, _collectionCarts);
     List<Cart> userCarts = result.documents
         .map((doc) => Cart.fromMap(doc.data, doc.documentID))
         .toList();
     return userCarts;
+  }
+
+  Future<int> getTotalItemsInCart(String userId) async {
+    var result = await firestoreAPI.getDocumentsCollection(userId, _collectionCarts);
+    List<Cart> userCarts = result.documents
+        .map((doc) => Cart.fromMap(doc.data, doc.documentID))
+        .toList();
+    return userCarts.length;
   }
 
   Future<String> fetchTotalPrice(String userId) async {

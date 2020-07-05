@@ -18,4 +18,6 @@ class Constants {
   static const String HERO_PRODUCT = 'hero_product';
   static const String HERO_PRODUCT_NAME= 'hero_product_name';
   static const String HERO_PRODUCT_PRICE = 'hero_product_price';
+
+  static const String TEST_USER_ID = "sdadasdasd12e123132";
 }

@@ -7,6 +7,7 @@ import 'package:flutterapp/core/models/product_model.dart';
 import 'package:flutterapp/core/viewmodels/appdata_crud_model.dart';
 import 'package:flutterapp/core/viewmodels/favourites_crud_model.dart';
 import 'package:flutterapp/persistance/user_box.dart';
+import 'package:flutterapp/ui/views/admin_orders.dart';
 import 'package:flutterapp/ui/views/cart_view.dart';
 import 'package:flutterapp/ui/views/user_info.dart';
 import 'package:flutterapp/ui/widgets/animated_bottombar.dart';
@@ -22,7 +23,7 @@ class _HomeView extends State<HomeView> {
   bool isSignedIn = false;
   int home = 1;
   Widget _animatedWidget;
-  Set<String> favourites = new HashSet();
+  Set<String> favourites = HashSet();
   bool isServiceUp = false;
 
   @override
@@ -43,7 +44,7 @@ class _HomeView extends State<HomeView> {
 
     setState(() {
       isSignedIn = UserBox.userBoxC.getBoolValue(Constants.IS_SIGNED_IN);
-      _animatedWidget = HomeWidget.homeView(true, favourites);
+      _animatedWidget = AdminOrders(); //HomeWidget.homeView(true, favourites);
     });
   }
 
@@ -56,14 +57,14 @@ class _HomeView extends State<HomeView> {
     return Scaffold(
       appBar: AppBar(
         title: Column(children: [
-          Text('Bakes',
+          Text('Sweet Simplicity',
               style: TextStyle(fontSize: 26.0, fontWeight: FontWeight.w800))
         ]),
         backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.shopping_cart),
+            icon: _getCartIcon(),
             onPressed: () => {
               Navigator.push(
                   context, MaterialPageRoute(builder: (_) => CartView()))
@@ -79,12 +80,12 @@ class _HomeView extends State<HomeView> {
               backgroundColor: Colors.transparent,
               context: context,
               builder: (BuildContext buildContext) {
-                return new Container(
+                return Container(
                     color: Colors.transparent,
-                    child: new Container(
-                        decoration: new BoxDecoration(
+                    child: Container(
+                        decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: new BorderRadius.only(
+                            borderRadius: BorderRadius.only(
                                 topLeft: const Radius.circular(20.0),
                                 topRight: const Radius.circular(20.0))),
                         child:
@@ -103,10 +104,12 @@ class _HomeView extends State<HomeView> {
         setState(() {
           switch (index) {
             case 0:
-              _animatedWidget = HomeWidget.homeView(isServiceUp, favourites);
+              _animatedWidget =
+                  AdminOrders(); 
+                  //HomeWidget.homeView(true, favourites);
               break;
             case 1:
-              _animatedWidget = HomeWidget.favouritesHome(favourites);
+              _animatedWidget = HomeWidget.homeView(true, favourites);
               break;
             case 2:
               _animatedWidget = UserInfo();
@@ -123,7 +126,7 @@ class _HomeView extends State<HomeView> {
       barrierDismissible: false,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text("Sign In to Continue",
+          title: Text("Sign In to Continue",
               style: TextStyle(fontWeight: FontWeight.w600)),
           content: GoogleSignInButton(),
         );
@@ -138,5 +141,43 @@ class _HomeView extends State<HomeView> {
 
   Future<AppData> _checkIfServiceIsUp() async {
     return await AppDataCRUDModel.appDataCRUDModel.getAppDataById();
+  }
+
+  _getCartIcon() {
+    return FutureBuilder(
+      builder: (context, snapshot) {
+        if(snapshot.hasData) {
+          return Stack(
+              children: <Widget>[
+                Icon(Icons.shopping_cart),
+                Positioned(
+                  right: 0,
+                  child: Container(
+                    padding: EdgeInsets.all(1),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    constraints: BoxConstraints(
+                      minWidth: 12,
+                      minHeight: 12,
+                    ),
+                    child: Text(
+                      '${snapshot.data.length}',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 8,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              ],
+            );
+        } else {
+          return Icon(Icons.shopping_cart);
+        }
+      }
+    );
   }
 }

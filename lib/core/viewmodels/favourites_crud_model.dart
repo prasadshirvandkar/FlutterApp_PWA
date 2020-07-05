@@ -14,7 +14,7 @@ class FavouritesCRUDModel extends ChangeNotifier {
   FirestoreAPI get firestoreAPI {
     if (_firestoreAPI != null) return _firestoreAPI;
 
-    _firestoreAPI = FirestoreAPI(path: 'orders');
+    _firestoreAPI = FirestoreAPI(path: 'userdata');
     return _firestoreAPI;
   }
 

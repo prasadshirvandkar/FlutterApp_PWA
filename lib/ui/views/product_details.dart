@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutterapp/constants.dart';
 import 'package:flutterapp/core/models/cart_model.dart';
 import 'package:flutterapp/core/viewmodels/cart_crud_model.dart';
+import 'package:flutterapp/core/viewmodels/favourites_crud_model.dart';
 import 'package:flutterapp/persistance/user_box.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 import '../../core/models/product_model.dart';
 
@@ -63,6 +65,7 @@ class _ProductDetails extends State<ProductDetails> {
                     onPressed: () => {
                       setState(() {
                         isFavorite = !isFavorite;
+                        addToFavorites(widget.productDetails, isFavorite);
                       })
                     },
                   )),
@@ -174,9 +177,10 @@ class _ProductDetails extends State<ProductDetails> {
                         height: 20.0,
                       ),
                       Align(
-                        alignment: Alignment.bottomRight,
-                        child: isServiceUp ? _addToCartButton() : _closedButton()
-                      )
+                          alignment: Alignment.bottomRight,
+                          child: isServiceUp
+                              ? _addToCartButton()
+                              : _closedButton())
                     ],
                   ),
                 ),
@@ -187,7 +191,7 @@ class _ProductDetails extends State<ProductDetails> {
   _addToCart() async {
     QuerySnapshot result = await CartCRUDModel.cartCRUDModel
         .checkIfProductExistsInCart(
-            'sdadasdasd12e123132', widget.productDetails.productId);
+            Constants.TEST_USER_ID, widget.productDetails.productId);
     if (result.documents.isNotEmpty) {
       var existingCartData = result.documents[0].data;
       existingCartData['quantity'] =
@@ -195,10 +199,10 @@ class _ProductDetails extends State<ProductDetails> {
       Cart cartData =
           Cart.fromMap(existingCartData, result.documents[0].documentID);
       await CartCRUDModel.cartCRUDModel
-          .updateCart('sdadasdasd12e123132', cartData, cartData.cartId);
+          .updateCart(Constants.TEST_USER_ID, cartData, cartData.cartId);
     } else {
       await CartCRUDModel.cartCRUDModel
-          .addCart(getCartData(), 'sdadasdasd12e123132');
+          .addCart(getCartData(), Constants.TEST_USER_ID);
     }
   }
 
@@ -216,6 +220,16 @@ class _ProductDetails extends State<ProductDetails> {
         dateTime: new DateTime.now().toString());
   }
 
+  void addToFavorites(Product product, bool favoriteValue) {
+    if (favoriteValue) {
+      FavouritesCRUDModel.favouritesCRUDModel
+          .addFavourite(product, Constants.TEST_USER_ID);
+    } else {
+      FavouritesCRUDModel.favouritesCRUDModel
+          .removeFavourite(product.productId, Constants.TEST_USER_ID);
+    }
+  }
+
   _closedButton() {
     return RaisedButton(
         onPressed: () => {},
@@ -230,7 +244,13 @@ class _ProductDetails extends State<ProductDetails> {
 
   _addToCartButton() {
     return RaisedButton(
-        onPressed: () async => {_addToCart()},
+        onPressed: () async => {
+              _addToCart(),
+              Fluttertoast.showToast(
+                  msg: 'Added to Cart', 
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM)
+            },
         color: Colors.amber,
         shape: StadiumBorder(),
         child: Padding(

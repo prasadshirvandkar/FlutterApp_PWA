@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutterapp/constants.dart';
 import 'package:flutterapp/core/models/cart_model.dart';
 import 'package:flutterapp/core/models/order_model.dart';
 import 'package:flutterapp/core/viewmodels/admin_order_crud_model.dart';
 import 'package:flutterapp/core/viewmodels/cart_crud_model.dart';
 import 'package:flutterapp/core/viewmodels/order_crud_model.dart';
+import 'package:flutterapp/order_status.dart';
+import 'package:flutterapp/ui/views/successful_order.dart';
 import 'package:uuid/uuid.dart';
 
 class CartConfirmation extends StatelessWidget {
@@ -119,7 +122,7 @@ class CartConfirmation extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        onPressed: () => {_placeOrder()},
+                        onPressed: () => {_placeOrder(context)},
                         child: Padding(
                           padding: EdgeInsets.all(16.0),
                           child: Center(
@@ -136,29 +139,35 @@ class CartConfirmation extends StatelessWidget {
     ]);
   }
 
-  _placeOrder() async {
+  _placeOrder(context) async {
     if (cartItems.isNotEmpty) {
       Order newOrder = getOrder();
       await OrderCRUDModel.orderCRUDModel
-          .addOrderWithCustomID(newOrder, 'sdadasdasd12e123132');
+          .addOrderWithCustomID(newOrder, Constants.TEST_USER_ID);
       await AdminOrdersCRUDModel.adminOrdersCRUDModel
           .addOrderWithCustomID(newOrder, 'active');
       _removeItemsFromCart();
+      Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (context) => SuccessfulOrder()),
+          (Route<dynamic> route) => false);
     }
   }
 
   _removeItemsFromCart() async {
     for (var cartItem in cartItems) {
       CartCRUDModel.cartCRUDModel
-          .removeItemFromCart('sdadasdasd12e123132', cartItem.cartId);
+          .removeItemFromCart(Constants.TEST_USER_ID, cartItem.cartId);
     }
   }
 
   Order getOrder() {
+    String orderId =
+        cartItems[0].cartId; //Uuid().v1().replaceAll('-', '').substring(0, 12);
     return Order(
-        userId: 'sdadasdasd12e123132',
+        orderId: orderId,
+        userId: Constants.TEST_USER_ID,
         totalPrice: totalPrice.toString(),
-        name: 'ID${Uuid().v1().replaceAll('-', '').substring(0, 12)}',
+        name: 'ID$orderId',
         productIds: cartItems
             .map((cartItem) => '${cartItem.productName} x ${cartItem.quantity}')
             .reduce((value, element) => '$value, $element'),
@@ -168,6 +177,6 @@ class CartConfirmation extends StatelessWidget {
         paymentStatus: 'Unpaid',
         location: 'asdasdasdasd',
         quantity: cartItems.length.toString(),
-        orderStatus: 'Order Placed');
+        orderStatus: OrderStatus.PLACED);
   }
 }

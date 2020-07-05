@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutterapp/core/models/order_model.dart';
+import 'package:flutterapp/order_status.dart';
 
 class OrderCard extends StatelessWidget {
   final Order orderDetails;
@@ -51,15 +52,27 @@ class OrderCard extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      InkWell(
-                          onTap: () => {},
-                          child: Text(
-                            'REORDER',
-                            style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.orange),
-                          )),
+                      (orderDetails.orderStatus != OrderStatus.DELIVERED)
+                          ? FlatButton(
+                              shape: StadiumBorder(),
+                              color: Colors.green,
+                              child: Padding(
+                                  padding: EdgeInsets.all(12.0),
+                                  child: Text(
+                                    'Active',
+                                    style: TextStyle(color: Colors.white),
+                                  )),
+                              onPressed: () => {},
+                            )
+                          : InkWell(
+                              onTap: () => {},
+                              child: Text(
+                                'REORDER',
+                                style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.orange),
+                              )),
                       OutlineButton(
                         shape: StadiumBorder(),
                         child: Padding(
@@ -74,48 +87,7 @@ class OrderCard extends StatelessWidget {
                             width: 4),
                         onPressed: () => {},
                       ),
-                    ]),
-                SizedBox(height: 4.0),
-                Divider(
-                  color: Colors.black,
-                  height: 1,
-                ),
-                SizedBox(height: 4.0),
-                ButtonBar(
-                  mainAxisSize: MainAxisSize.max,
-                  //alignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    RaisedButton(
-                      shape: StadiumBorder(),
-                      child: 
-                        Padding(
-                          padding: EdgeInsets.only(
-                            top: 10.0, bottom: 10.0,
-                            left: 24.0, right: 24.0
-                          ),
-                          child: Text('Reject', style: TextStyle(color: Colors.white, fontSize: 18.0))
-                        ),
-                      color: Colors.red,
-                      onPressed: () {
-
-                      },
-                    ),
-                    RaisedButton(
-                      shape: StadiumBorder(),
-                      child: Padding(
-                          padding: EdgeInsets.only(
-                            top: 10.0, bottom: 10.0,
-                            left: 24.0, right: 24.0
-                          ),
-                          child: Text('Accept', style: TextStyle(color: Colors.white, fontSize: 18.0))
-                        ),
-                      color: Colors.green,
-                      onPressed: () {
-
-                      },
-                    ),
-                  ],
-                ),
+                    ])
               ],
             )));
   }
